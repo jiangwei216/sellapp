@@ -1,0 +1,221 @@
+<template>
+  <div>
+    <!-- 头部 -->
+    <div>
+    <div class="header-bar">
+      <!-- 模糊 -->
+      <div class="moi" :style="{backgroundImage:'url('+data.avatar+')'}"></div>
+      <div class="header-top">
+        <div class="img">
+          <img :src="data.avatar" alt />
+        </div>
+        <div class="msg">
+          <p class="name">
+            <img src="../assets/imgs/brand@2x.png" alt />
+            {{data.name}}
+          </p>
+          <p class="des">{{data.description}}/{{data.deliveryTime}}分钟送达</p>
+          <p class="sup">
+            <img src="../assets/imgs//decrease_1@2x.png" alt />
+            {{data.supports?data.supports[0].description:''}}
+          </p>
+        </div>
+      </div>
+      <div class="header-bottom">
+        <p class="bul">
+          <img src="../assets/imgs/bulletin@2x.png" alt />
+          {{data.bulletin}}
+        </p>
+      </div>
+    </div>
+    <!-- 导航 -->
+    <div class="router-link-div">
+      <router-link to="/goods">商品</router-link>
+      <router-link to="/evaluate">评价</router-link>
+      <router-link to="/merchant">商家</router-link>
+    </div>
+    </div>
+    
+    <!-- //容器 -->
+    <router-view class="link-div"></router-view>
+    
+    <!-- 购物车 -->
+    <div class="shopcar-bar">
+      <div class="left">
+        <div class="img">
+          <Icon type="md-cart" />
+        </div>
+        <p>
+          <span class="sum">￥0</span>
+          <span class="deliveryPrice">另需配送费￥{{data.deliveryPrice}}元</span>
+        </p>
+      </div>
+      <div class="right">￥{{data.minPrice}}元起送</div>
+    </div>
+  </div>
+</template>
+
+<script>
+import { getSeller } from "../api/apis.js";
+export default {
+  data() {
+    return {
+      data: {}
+    };
+  },
+  created() {
+    getSeller().then(res => {
+      this.data = res.data.data;
+    });
+  }
+};
+</script>
+
+<style lang="less" scoped>
+* {
+  padding: 0;
+  margin: 0;
+}
+
+.link-div {
+  flex: 1;
+}
+.header-bar {
+    //  z-index: 99;
+  position: relative;
+  //背景
+  .moi {
+      z-index: 1;
+      position: absolute;
+      top: 0px;
+      left: 0px;
+    height: 20px;
+    height: 126px;
+    width: 100%;
+    z-index: -1;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 100% 100%;
+      filter: blur(1px);
+  }
+  // background-attachment: fixed;
+//   头部
+  .header-top {
+    height: 100px;
+    padding: 15px;
+    display: flex;
+    background-color: rgba(14, 12, 12, 0.1);
+    .img {
+      width: 70px;
+      height: 70px;
+      margin-right: 20px;
+     
+      img {
+        width: 100%; 
+        border-radius:10%
+      }
+    }
+    .msg {
+      flex: 1;
+      .name {
+        font-size: 20px;
+        color: #fff;
+        img {
+          height: 20px;
+          vertical-align: middle;
+        }
+      }
+      .des,
+      .sup {
+        color: #faf5f1;
+      }
+      .sup {
+        font-size: 12px;
+        img {
+          height: 12px;
+          vertical-align: middle;
+        }
+      }
+    }
+  }
+  .header-bottom {
+    height: 26px;
+    background-color: rgba(26, 22, 22, 0.2);
+    color: #fff;
+    .bul {
+      padding: 4px 10px;
+      font-size: 12px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      img {
+        height: 12px;
+        vertical-align: middle;
+      }
+    }
+  }
+}
+.router-link-div {
+  display: flex;
+  justify-content: space-around;
+  height: 40px;
+  border-bottom: 1px solid #ccc;
+  a {
+    line-height: 40px;
+    color: #4e555d;
+  }
+  a:hover {
+    color: red;
+  }
+}
+// 底部购物车
+.shopcar-bar {
+  position: fixed;
+  bottom: 0;
+  height: 50px;
+  width: 100%;
+  display: flex;
+  color: #97989a;
+  .left {
+    flex: 1;
+    display: flex;
+    background: #141c27;
+    position: relative;
+    .img {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: #2b343b;
+      position: relative;
+      left: 20px;
+      top: -10px;
+      i {
+        font-size: 30px;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+      }
+    }
+    p {
+      line-height: 50px;
+      margin-left: 30px;
+      .sum {
+        font-size: 20px;
+        padding: 5px;
+        border-right: 1px solid #2b343b;
+      }
+      .deliveryPrice {
+        padding: 5px;
+        font-size: 12px;
+      }
+    }
+  }
+  .right {
+    width: 120px;
+    background: #2b343b;
+    text-align: center;
+    line-height: 50px;
+  }
+}
+</style>
