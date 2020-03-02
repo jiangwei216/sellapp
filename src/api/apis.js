@@ -3,7 +3,9 @@ import axios from 'axios'
 
 // 请求一个对象
 let req=axios.create({
-baseURL:'http://localhost:3000',
+// baseURL:'http://localhost:3000',
+baseURL:'http://192.168.0.100:3000',
+
 timeout:10000//超时停止请求
 })
 //商家信息

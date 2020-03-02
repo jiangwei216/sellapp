@@ -2,51 +2,70 @@
   <div>
     <!-- 头部 -->
     <div>
-    <div class="header-bar">
-      <!-- 模糊 -->
-      <div class="moi" :style="{backgroundImage:'url('+data.avatar+')'}"></div>
-      <div class="header-top">
-        <div class="img">
-          <img :src="data.avatar" alt />
+      <div class="header-bar">
+        <!-- 模糊 -->
+        <div class="moi" :style="{backgroundImage:'url('+data.avatar+')'}"></div>
+        <div class="header-top">
+          <div class="img">
+            <img :src="data.avatar" alt />
+          </div>
+          <div class="msg">
+            <p class="name">
+              <img src="../assets/imgs/brand@2x.png" alt />
+              {{data.name}}
+            </p>
+            <p class="des">{{data.description}}/{{data.deliveryTime}}分钟送达</p>
+            <p class="sup">
+              <span>
+                <img src="../assets/imgs//decrease_1@2x.png" alt />
+                {{data.supports?data.supports[0].description:''}}
+              </span>
+              <span class="top_smbtn">
+                5个
+                <Icon class="nav_icon" type="ios-arrow-forward" color="#ccc" />
+              </span>
+            </p>
+          </div>
         </div>
-        <div class="msg">
-          <p class="name">
-            <img src="../assets/imgs/brand@2x.png" alt />
-            {{data.name}}
+        <div class="header-bottom">
+          <p class="bul">
+            <img src="../assets/imgs/bulletin@2x.png" alt />
+            <span>{{data.bulletin}}</span>
           </p>
-          <p class="des">{{data.description}}/{{data.deliveryTime}}分钟送达</p>
-          <p class="sup">
-            <img src="../assets/imgs//decrease_1@2x.png" alt />
-            {{data.supports?data.supports[0].description:''}}
-          </p>
+          <!-- <span>》</span>  -->
         </div>
       </div>
-      <div class="header-bottom">
-        <p class="bul">
-          <img src="../assets/imgs/bulletin@2x.png" alt />
-          {{data.bulletin}}
-        </p>
+      <!-- 导航 -->
+      <div class="router-link-div">
+        <div :class="this.curindex == '1'? 'active' : ''" @click="aclick('1')">
+          <router-link to="/goods">商品</router-link>
+        </div>
+        <div :class="this.curindex == '2'? 'active' : ''" @click="aclick('2')">
+          <router-link to="/evaluate">评价</router-link>
+        </div>
+        <div :class="this.curindex == '3'? 'active' : ''" @click="aclick('3')">
+          <router-link to="/merchant">商家</router-link>
+        </div>
       </div>
     </div>
-    <!-- 导航 -->
-    <div class="router-link-div">
-      <router-link to="/goods">商品</router-link>
-      <router-link to="/evaluate">评价</router-link>
-      <router-link to="/merchant">商家</router-link>
-    </div>
-    </div>
-    
+
     <!-- //容器 -->
     <router-view class="link-div"></router-view>
-    
-    <!-- 购物车 -->
+
+    <!-- //購物車容器-板子 -->
+    <transition name="slide-fade">
+      <div class="shopcar-bar1" v-show="shopcarbar1">
+        <Shopping/>
+      </div>
+    </transition>
+    <!-- 购物车logo -->
     <div class="shopcar-bar">
       <div class="left">
-        <div class="img">
+        <div class="img" @click="shopcarbar1=!shopcarbar1">
           <Icon type="md-cart" />
         </div>
         <p>
-          <span class="sum">￥0</span>
+          <span class="sum">￥{{prices}}</span>
           <span class="deliveryPrice">另需配送费￥{{data.deliveryPrice}}元</span>
         </p>
       </div>
@@ -57,12 +76,44 @@
 
 <script>
 import { getSeller } from "../api/apis.js";
+import Shopping from "./Shopping";
 export default {
+    components: {
+        Shopping
+      },
   data() {
     return {
-      data: {}
+      data: {},
+      color:false,
+      shopcarbar1: false,
+      curindex: "1" //选中状态
     };
   },
+   computed:{
+   prices(){
+      let num=0;
+      let goodsd = this.$store.state.goodslist 
+         goodsd.map(v=>{
+           v.foods.map(obj=>{
+           num+= obj.num*obj.price
+           })
+         })
+         if(num>=20){
+           document.querySelector('.sum').style.color='#faf5f1';
+           document.querySelector('.right').style.cssText="color:#faf5f1;"
+         }
+     return num
+    }
+    
+    
+ },
+  methods: {
+    //切换选中状态
+    aclick(index) {
+      this.curindex = index;
+    }
+  },
+
   created() {
     getSeller().then(res => {
       this.data = res.data.data;
@@ -79,40 +130,53 @@ export default {
 
 .link-div {
   flex: 1;
+
 }
 .header-bar {
-    //  z-index: 99;
+  //  z-index: 99;
   position: relative;
   //背景
   .moi {
-      z-index: 1;
-      position: absolute;
-      top: 0px;
-      left: 0px;
+    z-index: 1;
+    position: absolute;
+    top: 0px;
+    left: 0px;
     height: 20px;
     height: 126px;
     width: 100%;
     z-index: -1;
     background-repeat: no-repeat;
     background-position: center;
-    background-size: 100% 100%;
-      filter: blur(1px);
+    background-size: 100%;
+    filter: blur(1px);
   }
   // background-attachment: fixed;
-//   头部
+  //   头部
   .header-top {
     height: 100px;
     padding: 15px;
     display: flex;
     background-color: rgba(14, 12, 12, 0.1);
+    .top_smbtn {
+      position: absolute;
+      top: 46%;
+      left: 84%;
+      width: 14%;
+      height: 30px;
+      line-height: 30px;
+      text-align: center;
+      display: inline-block;
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 20px;
+    }
     .img {
       width: 70px;
       height: 70px;
       margin-right: 20px;
-     
+
       img {
-        width: 100%; 
-        border-radius:10%
+        width: 100%;
+        border-radius: 10%;
       }
     }
     .msg {
@@ -128,6 +192,8 @@ export default {
       .des,
       .sup {
         color: #faf5f1;
+        display: flex;
+        justify-content: space-between;
       }
       .sup {
         font-size: 12px;
@@ -148,6 +214,7 @@ export default {
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
+
       img {
         height: 12px;
         vertical-align: middle;
@@ -164,8 +231,10 @@ export default {
     line-height: 40px;
     color: #4e555d;
   }
-  a:hover {
-    color: red;
+  .active {
+    a {
+      color: #eb1311;
+    }
   }
 }
 // 底部购物车
@@ -217,5 +286,27 @@ export default {
     text-align: center;
     line-height: 50px;
   }
+}
+//購物車容器-板子
+.shopcar-bar1 {
+  position: fixed;
+  // height: 50px;
+  width: 100%;
+  bottom: 5px;
+  background-color: white;
+}
+
+/* 可以设置不同的进入和离开动画 */
+/* 设置持续时间和动画函数 */
+.slide-fade-enter-active {
+  transition: all 0.8s ease;
+}
+.slide-fade-leave-active {
+  transition: all 0.8s ease;
+}
+.slide-fade-enter, .slide-fade-leave-to
+/* .slide-fade-leave-active for below version 2.1.8 */ {
+  transform: translateY(300px);
+  opacity: 0;
 }
 </style>
