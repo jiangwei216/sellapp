@@ -6,18 +6,18 @@
     </div>
     <div class="shopcar-div">
       <div class="gd-div">
-        <div v-for="(item,index) in goodslist" :key="index">
-          <div class="gd-div1" v-for="(obj,i) in item.foods" :key="i" v-show="obj.num!==0">
+        <div v-for="item in shopcargoods" :key="item.name">
+          <div class="gd-div1" >
             <div class="left">
-              <img :src="obj.icon" alt="" style="width:50%;  height:100%">
-              <p>{{obj.name}}</p>
-              <p>{{obj.description}}</p>
+              <img :src="item.icon" alt="" style="width:50%; height:100%">
+              <p>{{item.name}}</p>
+              <p>{{item.description}}</p>
             </div>
             <div class="rigth">
-              <p>￥{{obj.num*obj.price}}</p>
-              <button @click="btn(index,i,-1)">-</button>
-              <span>{{obj.num}}</span>
-              <button @click="btn(index,i,1)">+</button>
+              <p>￥{{item.num*item.price}}</p>
+              <button  @click="btn(item.name, -1)">-</button>
+              <span>{{item.num}}</span>
+              <button @click="btn(item.name, 1)">+</button>
             </div>
           </div>
         </div>
@@ -29,18 +29,23 @@
 
 <script>
 export default {
+   created() {},
   methods: {
     // 加减
-    btn(index, i, val) {
-      this.$store.state.goodslist[index].foods[i].num += val;
+  btn(name, val) {
+      //触发改变数量mutation 1 -1
+      this.$store.commit("changeGoodsNum", {
+        name,
+        val
+      });
     },
      dels(){
         this.$store.state.goodslist.map(v=> v.foods.map(dels=> dels. num=0 ) )
     }
   },
   computed: {
-    goodslist() {
-      return this.$store.state.goodslist;
+    shopcargoods() {
+      return this.$store.getters.getShopCarGoods;
     }
   }
 };

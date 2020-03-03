@@ -9,7 +9,7 @@
           <div class="img">
             <img :src="data.avatar" alt />
           </div>
-          <div class="msg">
+          <div class="toux">
             <p class="name">
               <img src="../assets/imgs/brand@2x.png" alt />
               {{data.name}}
@@ -86,23 +86,20 @@ export default {
       data: {},
       color:false,
       shopcarbar1: false,
-      curindex: "1" //选中状态
+      curindex: "1" //选中状态 导航
     };
   },
    computed:{
    prices(){
-      let num=0;
-      let goodsd = this.$store.state.goodslist 
-         goodsd.map(v=>{
-           v.foods.map(obj=>{
-           num+= obj.num*obj.price
-           })
-         })
-         if(num>=20){
+      let total=0;
+     for(let food of this.$store.getters.getShopCarGoods){
+        total += food.num * food.price
+      }
+         if(total>=20){
            document.querySelector('.sum').style.color='#faf5f1';
            document.querySelector('.right').style.cssText="color:#faf5f1;"
          }
-     return num
+     return total
     }
     
     
@@ -179,7 +176,7 @@ export default {
         border-radius: 10%;
       }
     }
-    .msg {
+    .toux {
       flex: 1;
       .name {
         font-size: 20px;

@@ -43,10 +43,10 @@
                       style="text-decoration :line-through " v-show="child.oldPrice">￥{{child.oldPrice}}</span>
                   </h4>
                   <div>
-                    <button class="button" v-show="child.num!==0" @click="subtract(index,i,-1)">－</button>
-                    <span v-show="child.num!==0">{{child.num}}</span>
+                    <button class="button" v-show="child.num > 0" @click="clickNumChange(child.name,-1)">－</button>
+                    <span v-show="child.num > 0">{{child.num}}</span>
                     
-                   <button class="button" @click="subtract(index,i,1)">＋</button>
+                   <button class="button" @click="clickNumChange(child.name,1)">＋</button>
                   </div>
                 </div>
               </div>
@@ -103,15 +103,21 @@ export default {
       this.goodsRigth.scrollToElement(document.getElementById(index), 400);
     },
     // 点菜按钮
-    subtract(index,i,val){
-        this.$store.state.goodslist[index].foods[i].num+=val;
+    clickNumChange(name, val){
+      // console.log('被点了：' , name , val)
+      //触发改变数量mutation 1 -1
+      this.$store.commit('changeGoodsNum', {
+        name,
+        val
+      })
+       // 改变vuex中对应商品的数量 -1
     }
   },
   // 计算属性
   computed: {
     getHeight() {
-      let arr = []; //定义一个空数组用于储存
-      let total = 0; //定义一个变量用于保存最大值或最小值
+      let arr = []; //用于储存
+      let total = 0; //保存最大值或最小值
       for (let i = 0; i < this.goodslist.length; i++) {
         let count = document.getElementById(i).offsetHeight; //保存高度
         arr.push({ min: total, max: total + count, index: i });
